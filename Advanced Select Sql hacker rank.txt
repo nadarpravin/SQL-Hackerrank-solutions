@@ -1,0 +1,78 @@
+1.SELECT
+CASE
+    WHEN A + B <= C OR A + C <= B OR B + C <= A
+        THEN 'Not A Triangle'
+    WHEN A = B AND A = C AND B = C
+        THEN 'Equilateral'
+    WHEN A = B OR A = C OR B = C
+        THEN 'Isosceles'
+    ELSE 'Scalene'
+END
+FROM TRIANGLES;
+
+2.
+select concat(name,"(",left(occupation,1),")")
+from occupations
+order by name asc;
+
+SELECT CONCAT("There are a total of ", COUNT(Occupation), ' ', LOWER(Occupation), "s.")
+FROM OCCUPATIONS
+GROUP BY Occupation
+ORDER BY COUNT(Occupation), Occupation ASC;
+
+3.
+SET @d=0, @a=0, @p=0, @s=0;
+SELECT MIN(Doctor), MIN(Professor), MIN(Singer), MIN(Actor)
+FROM
+       (SELECT
+              CASE Occupation
+                     WHEN 'Doctor'
+                            THEN @d:=@d+1
+                     WHEN 'Professor'
+                            THEN @a:=@a+1
+                     WHEN 'Singer'
+                            THEN @p:=@p+1
+                     WHEN 'Actor'
+                            THEN @s:=@s+1
+              END AS RowLine,
+              CASE
+                     WHEN Occupation = 'Doctor'
+                            THEN Name
+              END AS Doctor,
+              CASE
+                     WHEN Occupation = 'Professor'
+                            THEN Name
+              END AS Professor,
+              CASE
+                     WHEN Occupation = 'Singer'
+                            THEN Name
+              END AS Singer,
+              CASE
+                     WHEN Occupation = 'Actor'
+                            THEN Name
+              END AS Actor
+              FROM OCCUPATIONS
+       ORDER BY Name) AS t
+GROUP BY RowLine;
+
+
+4.SELECT
+CASE
+    WHEN P IS NULL
+        THEN CONCAT(N, ' Root')
+    WHEN N IN (SELECT DISTINCT P FROM BST)
+        THEN CONCAT(N, ' Inner')
+    ELSE CONCAT(N, ' Leaf')
+END
+FROM BST
+ORDER BY N ASC;
+
+5.SELECT c.company_code, c.founder, 
+      COUNT(DISTINCT l.lead_manager_code), COUNT(DISTINCT s.senior_manager_code),
+      COUNT(DISTINCT m.manager_code), COUNT(DISTINCT e.employee_code)
+FROM Company c, Lead_Manager l, Senior_Manager s, Manager m, Employee e
+WHERE c.company_code = l.company_code AND 
+      l.lead_manager_code = s.lead_manager_code AND
+      s.senior_manager_code = m.senior_manager_code AND
+      m.manager_code = e.manager_code
+GROUP BY c.company_code, c.founder ORDER BY c.company_code;
